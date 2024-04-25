@@ -27,7 +27,19 @@
   },
   "manifest": {
     "host_permissions": [
-      "https://*/*"
+      "<all_urls>"
+    ], 
+    "permissions":[
+      "activeTab",
+      "contextMenus",
+      "tabs",
+      "storage"
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": ["src/features/emoji.png"],
+        "matches": ["<all_urls>"]
+      }
     ]
   }
 }
