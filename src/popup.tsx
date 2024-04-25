@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { TextSelected } from "~features/text-selected";
 import cssText from "data-text:~style.css";
+import "./style.css"
 
-export const getStyle = () => {
-    const style = document.createElement("style");
-    style.textContent = cssText;
-    return style;
-};
+
+
 
 const IndexPopup = () => {
     const [selectedText, setSelectedText] = useState("");
@@ -24,10 +22,11 @@ const IndexPopup = () => {
     }, []);
 
     return (
-        <div className="plasmo-z-50 plasmo-flex plasmo-flex-col plasmo-fixed plasmo-top-30 plasmo-right-8 plasmo-space-y-4">
+<div className="px-16 py-16 bg-gradient-to-br from-gray-800 via-blue-800 to-blue-900 shadow-2xl rounded-xl text-white text-lg">
             <TextSelected selectedText={selectedText} senpyData={senpyData} algorithm={algorithm} />
         </div>
     );
+    
 };
 
 export default IndexPopup;
