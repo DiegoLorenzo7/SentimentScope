@@ -1,33 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
-export const TextSelected = () => {
-    const [selectedText, setSelectedText] = useState("");
-    const [senpyData, setSenpyData] = useState(null);
+export const TextSelected = ({ selectedText, senpyData, algorithm }) => {
+    const renderResults = () => {
+        if (!senpyData || !algorithm) {
+            return <div>No hay datos para analizar.</div>;
+        }
 
-    useEffect(() => {
-        const messageListener = (message) => {
-            if (message.type === "senpy-result") {
-                setSelectedText(message.text);  // Usamos el texto seleccionado que se pasa desde el background
-                setSenpyData(message.senpyData.entries[0]);  
-            }
-        };
+        if (algorithm === "sentiment140" && senpyData['marl:hasOpinion']) {
+            return (
+                <div>
+                    <h3>Resultados de los análisis con Sentiment140:</h3>
+                    {senpyData['marl:hasOpinion'].map((opinion, index) => (
+                        <p key={index}>Sentiment: {opinion['marl:hasPolarity'].split(':').pop()}</p>
+                    ))}
+                </div>
+            );
+        } else if (algorithm === "sentiment-vader") {
+            return (
+                <div>
+                    <h3>Resultados de los análisis con VADER:</h3>
+                    {senpyData['marl:hasOpinion'].map((opinion, index) => (
+                        <p key={index}>
+                            {opinion['marl:hasPolarity'].split(':').pop()}: {opinion['marl:polarityValue']}
+                        </p>
+                    ))}
+                </div>
+            );
+        }
 
-        chrome.runtime.onMessage.addListener(messageListener);
-
-        return () => chrome.runtime.onMessage.removeListener(messageListener);
-    }, []);
+        return <div>Please select a text and an analysis type.</div>;
+    };
 
     return (
         <div>
             <textarea value={selectedText} readOnly rows={3} />
-            {senpyData && senpyData['marl:hasOpinion'] && (
-                <div>
-                    <h3>Resultados del análisis:</h3>
-                    {senpyData['marl:hasOpinion'].map((opinion, index) => (
-                        <p key={index}>Sentimiento: {opinion['marl:hasPolarity'].split(':').pop()} </p>
-                    ))}
-                </div>
-            )}
+            {renderResults()}
         </div>
     );
 };

@@ -1,12 +1,10 @@
 chrome.runtime.onInstalled.addListener(() => {
-    // Crea el menú principal
     chrome.contextMenus.create({
         title: "Analyze Emotions",
         contexts: ["selection"],
         id: "senpyMenu"
     });
 
-    // Submenú para Sentiment140
     chrome.contextMenus.create({
         title: "Sentiment140",
         contexts: ["selection"],
@@ -14,27 +12,21 @@ chrome.runtime.onInstalled.addListener(() => {
         id: "sentiment140"
     });
 
-    // Submenú para VADER (sin funcionalidad aún)
     chrome.contextMenus.create({
         title: "VADER",
         contexts: ["selection"],
         parentId: "senpyMenu",
-        id: "vader"
-    });
-
-    // Submenú para Sentiment Basic (sin funcionalidad aún)
-    chrome.contextMenus.create({
-        title: "Sentiment Basic",
-        contexts: ["selection"],
-        parentId: "senpyMenu",
-        id: "sentimentBasic"
+        id: "sentiment-vader"
     });
 });
 
+let lastAnalysisResult = null;
+
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-    if (info.menuItemId === "sentiment140" && info.selectionText) {
+    if ((info.menuItemId === "sentiment140" || info.menuItemId === "sentiment-vader") && info.selectionText) {
         const endpoint = 'http://senpy.gsi.upm.es/api';
-        const algorithm = 'sentiment140';  
+        const algorithm = info.menuItemId;
+
         try {
             const response = await fetch(`${endpoint}?input=${encodeURIComponent(info.selectionText)}&algo=${algorithm}`, {
                 method: 'GET',
@@ -46,8 +38,15 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
             }
 
             const data = await response.json();
+            lastAnalysisResult = {
+                algorithm: info.menuItemId,
+                text: info.selectionText,
+                senpyData: data
+            };
+
             chrome.tabs.sendMessage(tab.id, {
                 type: "senpy-result",
+                algorithm: info.menuItemId,
                 text: info.selectionText,
                 senpyData: data
             });
@@ -59,6 +58,10 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
             });
         }
     }
-    
+});
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === "request-latest-analysis") {
+        sendResponse(lastAnalysisResult);
+    }
 });

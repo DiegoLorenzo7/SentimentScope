@@ -9,28 +9,23 @@ export const getStyle = () => {
 };
 
 const IndexPopup = () => {
-    const [senpyData, setSenpyData] = useState(null);
     const [selectedText, setSelectedText] = useState("");
+    const [senpyData, setSenpyData] = useState(null);
+    const [algorithm, setAlgorithm] = useState("");
 
     useEffect(() => {
-        const messageListener = (message) => {
-            if (message.type === "senpy-result") {
-                console.log("Senpy Analysis Result:", message.senpyData);
-                setSelectedText(message.text);
-                setSenpyData(message.senpyData.entries[0]);
+        chrome.runtime.sendMessage({ type: "request-latest-analysis" }, (response) => {
+            if (response) {
+                setSelectedText(response.text);
+                setSenpyData(response.senpyData.entries[0]);      
+                setAlgorithm(response.algorithm);
             }
-        };
-
-        chrome.runtime.onMessage.addListener(messageListener);
-
-        return () => {
-            chrome.runtime.onMessage.removeListener(messageListener);
-        };
+        });
     }, []);
 
     return (
-        <div className="plasmo-z-50 plasmo-flex plasmo-flex-col plasmo-fixed plasmo-top-32 plasmo-right-8 plasmo-space-y-4">
-            <TextSelected />
+        <div className="plasmo-z-50 plasmo-flex plasmo-flex-col plasmo-fixed plasmo-top-30 plasmo-right-8 plasmo-space-y-4">
+            <TextSelected selectedText={selectedText} senpyData={senpyData} algorithm={algorithm} />
         </div>
     );
 };
