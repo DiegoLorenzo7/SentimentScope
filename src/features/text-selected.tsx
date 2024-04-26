@@ -1,8 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
+import { loadLexicon, analyzeKeywords } from './parsing_vader';
 
 export const TextSelected = ({ selectedText, senpyData, algorithm }) => {
+    const [lexicon, setLexicon] = useState({});
+
+    useEffect(() => {
+        if (algorithm === "sentiment-vader") {  // Cargar léxico solo si el algoritmo es VADER
+            loadLexicon().then(setLexicon);
+        }
+    }, [algorithm]);  // Agregar algorithm como dependencia del efecto
+
+    const keywordAnalysis = analyzeKeywords(selectedText, lexicon);
+
     const renderResults = () => {
         if (!senpyData || !algorithm) {
             return <div>No hay datos para analizar.</div>;
@@ -38,6 +49,12 @@ export const TextSelected = ({ selectedText, senpyData, algorithm }) => {
                 <div>
                     <h3>Resultados de los análisis con VADER:</h3>
                     <Doughnut data={data} options={{ responsive: true, maintainAspectRatio: true }} />
+                    <div>
+                        <h3>Análisis de palabras clave:</h3>
+                        {keywordAnalysis.map((item, index) => (
+                            <p key={index}>{item.word}: {item.sentiment > 0 ? 'Positive' : item.sentiment < 0 ? 'Negative' : 'Neutral'}</p>
+                        ))}
+                    </div>
                 </div>
             );
         }
@@ -57,3 +74,4 @@ export const TextSelected = ({ selectedText, senpyData, algorithm }) => {
         </>
     );
 };
+
