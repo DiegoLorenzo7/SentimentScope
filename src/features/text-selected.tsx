@@ -12,7 +12,7 @@ export const TextSelected = ({ selectedText, senpyData, algorithm }) => {
         }
     }, [algorithm]);  // Agregar algorithm como dependencia del efecto
 
-    const keywordAnalysis = analyzeKeywords(selectedText, lexicon);
+    const { coloredText, keywords } = analyzeKeywords(selectedText, lexicon);
 
     const renderResults = () => {
         if (!senpyData || !algorithm) {
@@ -48,10 +48,10 @@ export const TextSelected = ({ selectedText, senpyData, algorithm }) => {
             return (
                 <div>
                     <h3>Resultados de los análisis con VADER:</h3>
-                    <Doughnut data={data} options={{ responsive: true, maintainAspectRatio: true }} />
+                  <Doughnut data={data} options={{ responsive: true, maintainAspectRatio: true }} />
                     <div>
                         <h3>Análisis de palabras clave:</h3>
-                        {keywordAnalysis.map((item, index) => (
+                        {keywords.map((item, index) => (
                             <p key={index}>{item.word}: {item.sentiment > 0 ? 'Positive' : item.sentiment < 0 ? 'Negative' : 'Neutral'}</p>
                         ))}
                     </div>
@@ -64,14 +64,12 @@ export const TextSelected = ({ selectedText, senpyData, algorithm }) => {
 
     return (
         <>
-            <textarea
-                value={selectedText}
-                readOnly
-                rows={3}
-                className="bg-gray-800 text-green-400 font-mono text-sm p-3 border-none rounded overflow-auto w-auto h-60"
+            <div
+                className="bg-gray-800 text-white-400 font-mono text-sm p-3 border-none rounded overflow-auto w-auto h-60"
+                dangerouslySetInnerHTML={{ __html: coloredText }}
             />
             {renderResults()}
         </>
     );
+    
 };
-

@@ -26,11 +26,21 @@ export const loadLexicon = async () => {
 
 
 export const analyzeKeywords = (text, lexicon) => {
-    if (!text || !lexicon) return [];
-    const words = text.split(/\s+/);
-    return words.filter(word => lexicon.hasOwnProperty(word.toLowerCase()))
-                .map(word => ({
-                    word: word,
-                    sentiment: lexicon[word.toLowerCase()]
-                }));
+    if (!text || !lexicon) return { coloredText: text, keywords: [] };
+    let coloredText = text;
+    const keywords = [];
+    const wordRegex = /\w+/g; // Captura palabras
+
+    coloredText = text.replace(wordRegex, (matched) => {
+        const lowerMatch = matched.toLowerCase();
+        if (lexicon.hasOwnProperty(lowerMatch)) {
+            const sentiment = lexicon[lowerMatch];
+            const color = sentiment > 0 ? 'green' : sentiment < 0 ? 'red' : 'white'; // Asigna colores
+            keywords.push({ word: matched, sentiment });
+            return `<span style="color: ${color};">${matched}</span>`;
+        }
+        return matched;
+    });
+
+    return { coloredText, keywords };
 };

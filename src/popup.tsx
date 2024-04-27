@@ -22,7 +22,7 @@ const IndexPopup = () => {
     }, []);
 
     return (
-<div className="px-16 py-16 bg-gradient-to-br from-gray-800 via-blue-800 to-blue-900 shadow-2xl rounded-xl text-white text-lg">
+<div className="px-16 py-16 bg-gradient-to-br from-gray-800 via-white-800 to-blue-900 shadow-2xl rounded-xl text-white text-lg">
             <TextSelected selectedText={selectedText} senpyData={senpyData} algorithm={algorithm} />
         </div>
     );
