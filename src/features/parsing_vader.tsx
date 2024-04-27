@@ -35,7 +35,7 @@ export const analyzeKeywords = (text, lexicon) => {
         const lowerMatch = matched.toLowerCase();
         if (lexicon.hasOwnProperty(lowerMatch)) {
             const sentiment = lexicon[lowerMatch];
-            const color = sentiment > 0 ? 'green' : sentiment < 0 ? 'red' : 'white'; // Asigna colores
+            const color = sentiment > 0 ? '#32CD32' : sentiment < 0 ? '#FF2D00' : 'white'; // Asigna colores
             keywords.push({ word: matched, sentiment });
             return `<span style="color: ${color};">${matched}</span>`;
         }
