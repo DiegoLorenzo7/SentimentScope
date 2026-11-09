@@ -1,9 +1,9 @@
 {
-  "name": "analisis-de-valores",
-  "displayName": "Analisis de valores",
-  "version": "0.0.1",
-  "description": "Nueva extension",
-  "author": "Pablo F",
+  "name": "sentiment-scope",
+  "displayName": "SentimentScope",
+  "version": "1.0.0",
+  "description": "Interactive browser-based sentiment analysis extension",
+  "author": "Diego Lorenzo Roviralta",
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
@@ -43,6 +43,7 @@
     "web_accessible_resources": [
       {
         "resources": [
+          "*.png",
           "src/features/emoji.png",
           "src/features/vader_lexicon.txt"
         ],
